@@ -1,6 +1,6 @@
 "use strict";
 
-const Arlo = require("node-arlo");
+const Arlo = require("node-arlo-v2");
 const debug = require("debug")("Homebridge-Arlo");
 const ArloCameraSource = require("./ArloCameraSource.js");
 
@@ -23,7 +23,7 @@ module.exports = function (homebridge) {
   UUIDGen = homebridge.hap.uuid;
   HAP = homebridge.hap;
 
-  homebridge.registerPlatform("homebridge-arlo", "Arlo", ArloPlatform, true);
+  homebridge.registerPlatform("homebridge-arlo-v2", "Arlo", ArloPlatform, true);
 };
 
 class ArloPlatform {
@@ -252,7 +252,21 @@ class ArloPlatform {
           }.bind(this)
         );
 
-        arlo.login(this.config.email, this.config.password);
+        const arloUser = this.config.arloUser;
+        const arloPassword = this.config.arloPassword;
+        const emailUser = this.config.emailUser;
+        const emailPassword = this.config.emailPassword;
+        const emailServer = this.config.emailServer;
+        const emailImapPort = this.config.emailImapPort;
+
+        arlo.loginMfa({
+          arloUser,
+          arloPassword,
+          emailUser,
+          emailPassword,
+          emailServer,
+          emailImapPort,
+        });
       }.bind(this)
     );
   }

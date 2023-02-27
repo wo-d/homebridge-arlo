@@ -1,28 +1,46 @@
 {
-  "pluginAlias": "Arlo",
+  "pluginAlias": "Arlo v2",
   "pluginType": "platform",
   "singular": true,
-  "headerDisplay": "<p align='center'><img width='250px' src='https://raw.githubusercontent.com/homebridge-plugins/homebridge-arlo/master/arlo/arlo.png'></p>\n\nThe **Homebridge Arlo** plugin allows you to control your Arlo base station.",
-  "footerDisplay": "Please raise any issues on our [project page](https://github.com/homebridge-plugins/homebridge-arlo/issues).",
+  "headerDisplay": "The **Homebridge Arlo** plugin allows you to control your Arlo base station.",
+  "footerDisplay": "Please raise any issues on our [project page](https://github.com/wo-d/homebridge-arlo/issues).",
   "schema": {
     "type": "object",
     "properties": {
-      "name": {
+      "arloUser": {
         "type": "string",
-        "title": "Name",
-        "default": "Arlo",
+        "title": "Arlo User",
+        "default": "Arlo user",
         "required": true
       },
-      "email": {
+      "arloPassword": {
         "type": "string",
-        "title": "E-mail",
-        "placeholder": "email@arlo.com",
+        "title": "Arlo Password",
+        "placeholder": "Arlo password",
         "required": true
       },
-      "password": {
+      "emailUser": {
         "type": "string",
-        "title": "Password",
-        "placeholder": "Your Arlo Password",
+        "title": "MFA Email Address",
+        "placeholder": "Email address registered to receive MFA",
+        "required": true
+      },
+      "emailPassword": {
+        "type": "string",
+        "title": "Email Password",
+        "placeholder": "Email password",
+        "required": true
+      },
+      "emailServer": {
+        "type": "string",
+        "title": "Email IMAP Server",
+        "placeholder": "Email IMAP server. E.g. `imap.gmail.com`",
+        "required": true
+      },
+      "emailImapPort": {
+        "type": "number",
+        "title": "Email IMAP Port",
+        "placeholder": "Email IMAP server port, E.g. 993",
         "required": true
       },
       "interval": {
@@ -114,9 +132,12 @@
     }
   },
   "layout": [
-    "name",
-    "email",
-    "password",
+    "arloUser",
+    "arloPassword",
+    "emailUser",
+    "emailPassword",
+    "emailServer",
+    "emailImapPort",
     {
       "type": "fieldset",
       "title": "Streaming Settings",
