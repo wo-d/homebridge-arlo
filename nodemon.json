@@ -1,6 +1,10 @@
 {
-  "watch": ["index.js"],
-  "ext": "js",
+  "watch": ["src"],
+  "ext": "ts",
   "ignore": [],
-  "exec": "homebridge -D -I"
+  "exec": "tsc && homebridge -I -D",
+  "signal": "SIGTERM",
+  "env": {
+    "NODE_OPTIONS": "--trace-warnings"
+  }
 }
