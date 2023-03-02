@@ -43,124 +43,47 @@
         "placeholder": "Email IMAP server port, E.g. 993",
         "required": true
       },
-      "interval": {
-        "type": "integer",
-        "title": "Interval",
-        "placeholder": "6000",
-        "required": false
-      },
-      "stay_arm": {
-        "type": "string",
-        "title": "Stay Arm",
-        "placeholder": "modeX",
-        "required": false,
-        "description": "The modeX label for the custom mode created in Arlo for the home or stay state."
-      },
-      "night_arm": {
-        "type": "string",
-        "title": "Night Arm",
-        "placeholder": "modeX",
-        "required": false,
-        "description": "The modeX label for the custom mode created in Arlo for the night state."
-      },
-      "include_cameras": {
+      "debug": {
+        "title": "Debug Logging",
         "type": "boolean",
-        "title": "Include Cameras",
-        "default": true,
-        "required": true,
-        "description": "If you would like to disable cameras, uncheck this."
-      },
-      "streaming": {
-        "type": "object",
-        "properties": {
-          "videoProcessor": {
-            "title": "Video Processor",
-            "type": "string",
-            "required": false,
-            "placeholder": "ffmpeg",
-            "description": "Default: ffmpeg, The video processor used to perform transcoding. An alternate executable maybe used, however it needs to conform to ffmpeg parameters."
-          },
-          "videoDecoder": {
-            "title": "Video Decoder",
-            "type": "string",
-            "required": false,
-            "placeholder": "libx264",
-            "description": "Default: libx264, The video codec used to decode the incoming h264 stream from the Arlo server."
-          },
-          "videoEncoder": {
-            "title": "Video Encoder",
-            "type": "string",
-            "required": false,
-            "placeholder": "libx264",
-            "description": "Default: libx264, The video codec used to encode the outgoing h264 stream to the iOS client device."
-          },
-          "audioEncoder": {
-            "title": "Audio Encoder",
-            "type": "string",
-            "required": false,
-            "placeholder": "libopus",
-            "description": "Default: libopus, The audio codec that will be used to decode/encode the audio stream. HomeKit requires either an Opus or AAC-ELD format audio stream."
-          },
-          "packetSize": {
-            "title": "Packet Size",
-            "type": "string",
-            "required": false,
-            "placeholder": "1316",
-            "description": " Default: 1316, The packet sized to be used. Use smaller multiples of 188 to possibly improve performance (376, 564, etc)."
-          },
-          "maxBitrate": {
-            "title": "Packet Size",
-            "type": "string",
-            "required": false,
-            "placeholder": "300",
-            "description": "Default: 300, The maximum bitrate of the encoded stream in kbit/s."
-          },
-          "additionalVideoCommands": {
-            "title": "Packet Size",
-            "type": "string",
-            "required": false,
-            "description": "Any video-specific additional flags or commands to pass to the ffmpeg executable."
-          },
-          "additionalAudioCommands": {
-            "title": "Packet Size",
-            "type": "string",
-            "required": false,
-            "description": "Any audio-specific additional flags or commands to pass to the ffmpeg executable."
-          }
-        }
+        "required": false,
+        "description": "Logging verbosity for debugging. Default: false."
       }
     }
   },
   "layout": [
-    "arloUser",
-    "arloPassword",
-    "emailUser",
-    "emailPassword",
-    "emailServer",
-    "emailImapPort",
     {
-      "type": "fieldset",
-      "title": "Streaming Settings",
+      "type": "section,",
+      "title": "General Options",
       "expandable": true,
-      "expanded": false,
+      "expanded": true,
       "items": [
-        "include_cameras",
-        "streaming.videoProcessor",
-        "streaming.videoDecoder",
-        "streaming.videoEncoder",
-        "streaming.audioEncoder",
-        "streaming.packetSize",
-        "streaming.maxBitrate",
-        "streaming.additionalVideoCommands",
-        "streaming.additionalAudioCommands"
+        {
+          "description": "Enter your credentials below.",
+          "items": [
+            "arloUser",
+            "arloPassword",
+            "emailUser",
+            "emailPassword",
+            "emailServer",
+            "emailImapPort"
+          ]
+        }
       ]
     },
     {
-      "type": "fieldset",
-      "title": "Optional Settings",
+      "type": "section",
+      "title": "Advanced Settings (Optional)",
       "expandable": true,
       "expanded": false,
-      "items": ["interval", "stay_arm", "night_arm"]
+      "items": [
+        {
+          "description": "These settings should not be necessary for most installations.",
+          "items": [
+            "debug"
+          ]
+        }
+      ]
     }
   ]
 }

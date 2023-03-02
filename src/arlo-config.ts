@@ -1,12 +1,11 @@
 export interface arloOptionsInterface {
-  debug: boolean;
-
-  arloUser: string;
   arloPassword: string;
-  emailUser: string;
+  arloUser: string;
+  debug: boolean;
+  emailImapPort: number;
   emailPassword: string;
   emailServer: string;
-  emailImapPort: number;
+  emailUser: string;
 }
 
 export type arloOptions = Readonly<arloOptionsInterface>;
