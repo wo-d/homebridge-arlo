@@ -1,5 +1,7 @@
 # Homebridge-Arlo
 
+[![CircleCI](https://dl.circleci.com/status-badge/img/gh/wo-d/homebridge-arlo/tree/main.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/gh/wo-d/homebridge-arlo/tree/main)
+
 <a href="https://www.npmjs.com/package/homebridge-arlo-v2"><img title="npm version" src="https://badgen.net/npm/v/homebridge-arlo-v2" ></a>
 
 Homebridge plugin for Arlo.
