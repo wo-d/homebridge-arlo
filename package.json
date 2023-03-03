@@ -13,7 +13,6 @@
     "style": "npm run pretty && npm run lint",
     "postpublish": "npm run clean",
     "prepublishOnly": "npm run style && npm run build",
-    "test": "eslint src/**.ts",
     "watch": "npm run build && npm link && nodemon"
   },
   "license": "ISC",
