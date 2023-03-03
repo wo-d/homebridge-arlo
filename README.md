@@ -1,3 +1,7 @@
+## Do not merge
+
+Hey, I can help you write this plugin if you are open to it, or at least help diagnose issues. You'll need to enable GitHub Issues for me to easily be able to communicate with you, though. Thank you for doing the work to add 2FA to this plugin, because obviously the original is now broken. I was going to add 2FA SMS support via Twilio as an option when I came across your fork. Would you like to work together? All good if not, have a great day.
+
 <span align="center">
 
 <a href="https://arlo.com"><img alt="homebridge-arlo" src="https://raw.githubusercontent.com/homebridge-plugins/homebridge-arlo/master/arlo/arlo.png" width="140px"></a>
