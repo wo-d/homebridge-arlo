@@ -53,7 +53,7 @@
   },
   "layout": [
     {
-      "type": "section,",
+      "type": "section",
       "title": "General Options",
       "expandable": true,
       "expanded": true,

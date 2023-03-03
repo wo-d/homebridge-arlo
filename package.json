@@ -1,7 +1,7 @@
 {
   "displayName": "Homebridge Arlo",
   "name": "homebridge-arlo-v2",
-  "version": "2.1.2",
+  "version": "2.1.4",
   "description": "Arlo plugin for homebridge",
   "author": "Will O'Donnell",
   "main": "dist/index.js",
@@ -32,6 +32,7 @@
   },
   "devDependencies": {
     "@types/node": "^18.11.18",
+    "@types/tough-cookie": "^4.0.2",
     "@types/ws": "^8.5.4",
     "@typescript-eslint/eslint-plugin": "^5.48.0",
     "@typescript-eslint/parser": "^5.48.0",

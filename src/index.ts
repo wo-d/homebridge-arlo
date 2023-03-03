@@ -1,7 +1,7 @@
 import { PLATFORM_NAME, PLUGIN_NAME } from "./settings";
 import { API } from "homebridge";
-import { arloPlatform } from "./arlo-platform";
+import { ArloPlatform } from "./arlo-platform";
 
 export = (api: API): void => {
-  api.registerPlatform(PLUGIN_NAME, PLATFORM_NAME, arloPlatform);
+  api.registerPlatform(PLUGIN_NAME, PLATFORM_NAME, ArloPlatform);
 };
