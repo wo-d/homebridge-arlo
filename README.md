@@ -9,6 +9,7 @@ Includes email MFA support. Feel free to fork or make pull requests with additio
 
 * Library only supports Doorbell events.
 * Extremely nascent implementation. There may be unrecoverable states which require restart.
+  * When a login occurs to Arlo they close any other open connection. This poses a problem as the underlying library must maintain a connection to listen for events.
 
 ## Development
 

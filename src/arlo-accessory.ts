@@ -54,24 +54,37 @@ export class ArloAccessory {
   private async subscribe() {
     const basestation = new Basestation(this.arlo, this.device);
 
+    // Explicitly enable events.
+    basestation.enableDoorbellAlerts();
+
     // Subscribe to basestation events.
     basestation.on(ARLO_EVENTS.open, () => {
-      this.log('Basestation stream opened');
+      this.log.debug('Basestation stream opened');
     });
 
     basestation.on(ARLO_EVENTS.close, () => {
-      this.log('Basestation stream closed');
+      this.log.debug('Basestation stream closed');
+    });
+
+    basestation.on(ARLO_EVENTS.error, (data) => {
+      this.log.debug('error encountered');
+      this.log.debug(data);
     });
 
     basestation.on(ARLO_EVENTS.doorbellAlert, () => {
-      this.log('Doorbell alert encountered');
+      this.log('Doorbell alert encountered!');
       this.service.updateCharacteristic(
         this.platform.Characteristic.ProgrammableSwitchEvent,
         this.platform.Characteristic.ProgrammableSwitchEvent.SINGLE_PRESS,
       );
     })
 
-    this.log('Starting Basestation stream');
+    // Secret keep alive event.
+    basestation.on('pong', () => {
+      this.log.debug('ping');
+    })
+
+    this.log.debug('Starting Basestation stream');
     await basestation.startStream();
   }
 }
