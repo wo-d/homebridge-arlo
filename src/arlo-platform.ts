@@ -116,8 +116,8 @@ export class ArloPlatform implements DynamicPlatformPlugin {
         // existingAccessory.context.device = device;
         // this.api.updatePlatformAccessories([existingAccessory]);
 
-        // Create the accessory handler for the restored accessory.
-        existingAccessory.context.device = device;
+        // Create the accessory handler for the restored accessory. 
+        // The cached device keeps its context.
         new ArloAccessory(this, existingAccessory);
 
         // It is possible to remove platform accessories at any time using `api.unregisterPlatformAccessories`, eg.:

@@ -11,6 +11,7 @@ export class ArloAccessory {
   protected readonly arlo: Client;
   protected readonly log: Logging;
   protected readonly platform: ArloPlatform;
+  protected readonly device: DEVICE_RESPONSE;
 
   /**
    * Tracks the state of the accessory.
@@ -25,12 +26,12 @@ export class ArloAccessory {
     this.platform = platform;
     this.accessory = accessory;
 
-    const device = this.accessory.context as DEVICE_RESPONSE;
+    this.device = this.accessory.context.device as DEVICE_RESPONSE;
 
     this.accessory.getService(this.platform.Service.AccessoryInformation)!
       .setCharacteristic(this.platform.Characteristic.Manufacturer, "Arlo")
-      .setCharacteristic(this.platform.Characteristic.Model, device.properties.modelId)
-      .setCharacteristic(this.platform.Characteristic.SerialNumber, device.deviceId);
+      .setCharacteristic(this.platform.Characteristic.Model, this.device.properties.modelId)
+      .setCharacteristic(this.platform.Characteristic.SerialNumber, this.device.deviceId);
 
     // NOTE: Only the doorbell is supported at this time.
     // Get the Doorbell service if it exists, otherwise create a new service.
@@ -38,7 +39,7 @@ export class ArloAccessory {
     this.service = this.accessory.getService(this.platform.Service.Doorbell) || this.accessory.addService(this.platform.Service.Doorbell);
 
     // Sets the service name, this is what is displayed as the default name on the Home app.
-    this.service.setCharacteristic(this.platform.Characteristic.Name, DisplayName(device));
+    this.service.setCharacteristic(this.platform.Characteristic.Name, DisplayName(this.device));
 
     // Each service must implement at-minimum the "required characteristics" for the given service type
     // see https://developers.homebridge.io/#/service/Doorbell
@@ -51,7 +52,7 @@ export class ArloAccessory {
   }
 
   private async subscribe() {
-    const basestation = new Basestation(this.arlo, this.accessory.context as DEVICE_RESPONSE);
+    const basestation = new Basestation(this.arlo, this.device);
 
     // Subscribe to basestation events.
     basestation.on(ARLO_EVENTS.open, () => {
