@@ -17,11 +17,7 @@ Feel free to fork or make pull requests with additional features.
 
 ## Installation
 
-Manually install the plugin by accessing your homebridge terminal and entering
-
-```shell
-sudo hbs plugin add homebridge-arlo-v2
-```
+This varies by homebridge installation and gui.
 
 ## Development
 
