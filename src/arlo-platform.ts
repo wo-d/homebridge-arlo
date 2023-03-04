@@ -10,9 +10,7 @@ import {
 } from "homebridge";
 import * as util from "util";
 import { arloOptionsInterface } from "./arlo-config";
-import { Basestation, Client } from "arlo-api";
-import ARLO_EVENTS from "arlo-api/dist/constants/arlo-events";
-import { DEVICE_RESPONSE } from "arlo-api/dist/interfaces/arlo-interfaces";
+import { Client } from "arlo-api";
 import { ArloAccessory } from "./arlo-accessory";
 import { PLATFORM_NAME, PLUGIN_NAME } from "./settings";
 import { DisplayName } from "./utils/utils";
@@ -27,6 +25,10 @@ export class ArloPlatform implements DynamicPlatformPlugin {
 
   // This is used to track restored cached accessories.
   public readonly accessories: PlatformAccessory[] = [];
+
+  // TODO: Use the login result object to bypass logging in if possible. Use client's verifyAuthToken method
+  // TODO: Idea, create an accessory to cache token.
+  // TODO: Check the login result's session expires to generate a new token when close to expiry.
 
   constructor(log: Logging, config: PlatformConfig, api: API) {
     this.api = api;
@@ -44,14 +46,20 @@ export class ArloPlatform implements DynamicPlatformPlugin {
       arloPassword: config.arloPassword as string,
       arloUser: config.arloUser as string,
       debug: config.debug === true,
-      emailImapPort:
-        "emailImapPort" in config
-          ? parseInt(config.emailImapPort as string)
-          : -1,
+      emailImapPort: parseInt(config.emailImapPort as string),
       emailPassword: config.emailPassword as string,
       emailServer: config.emailServer as string,
       emailUser: config.emailUser as string,
+      enableRetry: config.enableRetry === true,
+      retryInterval: parseInt(config.retryInterval as string),
     };
+
+    if (this.config.enableRetry) {
+      if (this.config.retryInterval <= 0) {
+        this.log.error('Retry Interval configuration must be a positive integer');
+        return
+      }
+    }
 
     try {
       this.arlo = new Client(this.config);
@@ -70,6 +78,21 @@ export class ArloPlatform implements DynamicPlatformPlugin {
       // Run the method to discover / register your devices as accessories.
       this.discoverDevices();
     });
+  }
+
+  /**
+   * Event handler called by an accessory when it receives a closed stream event.
+   * @param accessory
+   */
+  public streamClosed(accessory: ArloAccessory) {
+    if (!this.config.enableRetry) {
+      this.log.error('Retries disabled and stream has been closed. Application stalled.');
+      return;
+    }
+
+    this.debug(`Stream was closed. Retrying to establish connection in ${this.config.retryInterval} minute(s).`);
+    // Restart the stream in x minutes.
+    setTimeout(() => accessory.openStream(), this.config.retryInterval * 60000);
   }
 
   /**

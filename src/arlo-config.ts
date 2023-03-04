@@ -6,6 +6,8 @@ export interface arloOptionsInterface {
   emailPassword: string;
   emailServer: string;
   emailUser: string;
+  enableRetry: boolean;
+  retryInterval: number;
 }
 
 export type arloOptions = Readonly<arloOptionsInterface>;

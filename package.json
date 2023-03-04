@@ -1,7 +1,7 @@
 {
   "displayName": "Homebridge Arlo",
   "name": "homebridge-arlo-v2",
-  "version": "2.1.4",
+  "version": "2.1.5",
   "description": "Arlo plugin for homebridge",
   "author": "Will O'Donnell",
   "main": "dist/index.js",
@@ -43,7 +43,7 @@
     "typescript": "^4.9.4"
   },
   "dependencies": {
-    "arlo-api": "^1.0.9",
+    "arlo-api": "^1.0.11",
     "debug": "^4.1.1",
     "ffmpeg-for-homebridge": "^0.0.9",
     "ip": "^1.1.5",

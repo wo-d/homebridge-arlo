@@ -2,7 +2,7 @@ import { ArloPlatform } from "./arlo-platform";
 import { Logging, PlatformAccessory, Service } from "homebridge";
 import { Basestation, Client } from "arlo-api";
 import { DEVICE_RESPONSE } from "arlo-api/dist/interfaces/arlo-interfaces";
-import { DisplayName } from "./utils/utils";
+import { debounce, DisplayName } from "./utils/utils";
 import ARLO_EVENTS from "arlo-api/dist/constants/arlo-events";
 
 export class ArloAccessory {
@@ -12,13 +12,7 @@ export class ArloAccessory {
   protected readonly log: Logging;
   protected readonly platform: ArloPlatform;
   protected readonly device: DEVICE_RESPONSE;
-
-  /**
-   * Tracks the state of the accessory.
-   */
-  private states = {
-    buttonPressed: false,
-  };
+  private readonly basestation: Basestation;
 
   constructor(platform: ArloPlatform, accessory: PlatformAccessory) {
     this.arlo = platform.arlo
@@ -47,31 +41,40 @@ export class ArloAccessory {
     // add characteristic ProgrammableSwitchEvent
     this.service.getCharacteristic(this.platform.Characteristic.ProgrammableSwitchEvent);
 
+    this.basestation = new Basestation(this.arlo, this.device);
     // Fire off basestation subscribe.
     this.subscribe();
+    this.openStream();
   }
 
-  private async subscribe() {
-    const basestation = new Basestation(this.arlo, this.device);
-
+  private subscribe() {
     // Explicitly enable events.
-    basestation.enableDoorbellAlerts();
+    this.basestation.enableDoorbellAlerts();
 
     // Subscribe to basestation events.
-    basestation.on(ARLO_EVENTS.open, () => {
+    this.basestation.on(ARLO_EVENTS.open, () => {
       this.log.debug('Basestation stream opened');
     });
 
-    basestation.on(ARLO_EVENTS.close, () => {
-      this.log.debug('Basestation stream closed');
-    });
+    // It's necessary to debounce the stream closed events as
+    // we could end up trying to restore the stream multiple times at once.
+    const streamClosed = (data: string) => {
+      this.log.debug(`Basestation stream closed: ${data}`);
+      // Let the platform know that an accessory stream was closed.
+      this.platform.streamClosed(this);
+    }
 
-    basestation.on(ARLO_EVENTS.error, (data) => {
+    const debounceStreamClose = debounce(streamClosed, 2000);
+
+    this.basestation.on(ARLO_EVENTS.close, debounceStreamClose);
+
+    this.basestation.on(ARLO_EVENTS.error, (data) => {
+      this.basestation.close();
       this.log.debug('error encountered');
       this.log.debug(data);
     });
 
-    basestation.on(ARLO_EVENTS.doorbellAlert, () => {
+    this.basestation.on(ARLO_EVENTS.doorbellAlert, () => {
       this.log('Doorbell alert encountered!');
       this.service.updateCharacteristic(
         this.platform.Characteristic.ProgrammableSwitchEvent,
@@ -80,11 +83,13 @@ export class ArloAccessory {
     })
 
     // Secret keep alive event.
-    basestation.on('pong', () => {
+    this.basestation.on('pong', () => {
       this.log.debug('ping');
     })
+  }
 
+  public async openStream() {
     this.log.debug('Starting Basestation stream');
-    await basestation.startStream();
+    await this.basestation.startStream();
   }
 }
