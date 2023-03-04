@@ -2,7 +2,7 @@ import { ArloPlatform } from "./arlo-platform";
 import { Logging, PlatformAccessory, Service } from "homebridge";
 import { Basestation, Client } from "arlo-api";
 import { DEVICE_RESPONSE } from "arlo-api/dist/interfaces/arlo-interfaces";
-import { DisplayName } from "./utils/utils";
+import { debounce, DisplayName } from "./utils/utils";
 import ARLO_EVENTS from "arlo-api/dist/constants/arlo-events";
 
 export class ArloAccessory {
@@ -56,9 +56,17 @@ export class ArloAccessory {
       this.log.debug('Basestation stream opened');
     });
 
-    this.basestation.on(ARLO_EVENTS.close, () => {
-      this.log.debug('Basestation stream closed');
-    });
+    // It's necessary to debounce the stream closed events as
+    // we could end up trying to restore the stream multiple times at once.
+    const streamClosed = (data: string) => {
+      this.log.debug(`Basestation stream closed: ${data}`);
+      // Let the platform know that an accessory stream was closed.
+      this.platform.streamClosed(this);
+    }
+
+    const debounceStreamClose = debounce(streamClosed, 2000);
+
+    this.basestation.on(ARLO_EVENTS.close, debounceStreamClose);
 
     this.basestation.on(ARLO_EVENTS.error, (data) => {
       this.basestation.close();

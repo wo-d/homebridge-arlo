@@ -71,6 +71,16 @@ export class ArloPlatform implements DynamicPlatformPlugin {
   }
 
   /**
+   * Event handler called by an accessory when it receives a closed stream event.
+   * @param accessory
+   */
+  public streamClosed(accessory: ArloAccessory) {
+    this.debug('Stream was closed. Retrying to establish connection in 30 seconds.');
+    // Restart the stream in 30 seconds.
+    setTimeout(() => accessory.openStream(), 30 * 1000);
+  }
+
+  /**
    * Discovers all Arlo devices connected to account.
    *
    * Accessories must only be registered once, previously created accessories
