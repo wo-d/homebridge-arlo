@@ -10,9 +10,7 @@ import {
 } from "homebridge";
 import * as util from "util";
 import { arloOptionsInterface } from "./arlo-config";
-import { Basestation, Client } from "arlo-api";
-import ARLO_EVENTS from "arlo-api/dist/constants/arlo-events";
-import { DEVICE_RESPONSE } from "arlo-api/dist/interfaces/arlo-interfaces";
+import { Client } from "arlo-api";
 import { ArloAccessory } from "./arlo-accessory";
 import { PLATFORM_NAME, PLUGIN_NAME } from "./settings";
 import { DisplayName } from "./utils/utils";
@@ -150,6 +148,7 @@ export class ArloPlatform implements DynamicPlatformPlugin {
    * @returns true when login is successful, false otherwise.
    */
   public async login(): Promise<boolean> {
+    // TODO: Use the login result object to bypass logging in if possible.
     const loginResult = await this.arlo.login().catch(error => {
       this.log.error("Unable to login to Arlo using provided credentials.");
       this.log.error(error);
