@@ -58,7 +58,7 @@ Update homebridge configuration file. Default location in Windows `C:\Users\{use
             "debug": true,
             "enableRetry": true,
             "retryInterval": 5,
-            "platform": "Arlo"
+            "platform": "Arlo v2"
         }
     ],
     "accessories": []
