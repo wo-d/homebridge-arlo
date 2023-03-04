@@ -1,5 +1,5 @@
 {
-  "pluginAlias": "Arlo v2",
+  "pluginAlias": "Arlo",
   "pluginType": "platform",
   "singular": true,
   "headerDisplay": "The **Homebridge Arlo** plugin allows you to control your Arlo base station.",
