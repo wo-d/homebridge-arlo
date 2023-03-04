@@ -10,7 +10,7 @@
       "arloUser": {
         "type": "string",
         "title": "Arlo User",
-        "default": "Arlo user",
+        "placeholder": "Arlo user",
         "required": true
       },
       "arloPassword": {
@@ -43,11 +43,26 @@
         "placeholder": "Email IMAP server port, E.g. 993",
         "required": true
       },
+      "enableRetry": {
+        "title": "Enable Retry",
+        "type": "boolean",
+        "required": true,
+        "default": true,
+        "description": "Enable retries. If a stream is closed for any reason will retry to establish connection."
+      },
+      "retryInterval": {
+        "title": "Retry Interval",
+        "type": "number",
+        "required": true,
+        "default": 5,
+        "description": "Define the time in minutes between retry attempts."
+      },
       "debug": {
         "title": "Debug Logging",
         "type": "boolean",
         "required": false,
-        "description": "Logging verbosity for debugging. Default: false."
+        "default": false,
+        "description": "Logging verbosity for debugging."
       }
     }
   },
@@ -67,6 +82,21 @@
             "emailPassword",
             "emailServer",
             "emailImapPort"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "section",
+      "title": "Recovery",
+      "expandable": true,
+      "expanded": true,
+      "items": [
+        {
+          "description": "Enter recovery options below.",
+          "items": [
+            "enableRetry",
+            "retryInterval"
           ]
         }
       ]

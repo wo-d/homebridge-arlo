@@ -5,7 +5,9 @@
 <a href="https://www.npmjs.com/package/homebridge-arlo-v2"><img title="npm version" src="https://badgen.net/npm/v/homebridge-arlo-v2" ></a>
 
 Homebridge plugin for Arlo.
-Includes email MFA support. Feel free to fork or make pull requests with additional features.
+Includes email MFA support. Please read the underlying library [arlo-api's README](https://github.com/wo-d/arlo-api/blob/main/README.md#authentication) for information about configuring MFA correctly. 
+
+Feel free to fork or make pull requests with additional features.
 
 ## Caveats
 
@@ -58,6 +60,8 @@ Update homebridge configuration file. Default location in Windows `C:\Users\{use
             "emailServer": "imap.gmail.com",
             "emailImapPort": 993,
             "debug": true,
+            "enableRetry": true,
+            "retryInterval": 5,
             "platform": "Arlo"
         }
     ],
