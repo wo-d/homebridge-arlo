@@ -30,7 +30,9 @@ export class ArloAccessory {
     // NOTE: Only the doorbell is supported at this time.
     // Get the Doorbell service if it exists, otherwise create a new service.
     // Multiple services can be created for each accessory.
-    this.service = this.accessory.getService(this.platform.Service.Doorbell) || this.accessory.addService(this.platform.Service.Doorbell);
+    this.service =
+      this.accessory.getService(this.platform.Service.Doorbell) ||
+      this.accessory.addService(this.platform.Service.Doorbell);
 
     // Sets the service name, this is what is displayed as the default name on the Home app.
     this.service.setCharacteristic(this.platform.Characteristic.Name, DisplayName(this.device));
@@ -39,7 +41,11 @@ export class ArloAccessory {
     // see https://developers.homebridge.io/#/service/Doorbell
 
     // add characteristic ProgrammableSwitchEvent
-    this.service.getCharacteristic(this.platform.Characteristic.ProgrammableSwitchEvent);
+    this.service
+      .getCharacteristic(this.platform.Characteristic.ProgrammableSwitchEvent)
+      .onGet(() => null);
+
+    this.service.setPrimaryService(true);
 
     this.basestation = new Basestation(this.arlo, this.device);
     // Fire off basestation subscribe.
