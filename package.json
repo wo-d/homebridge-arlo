@@ -1,7 +1,7 @@
 {
   "displayName": "Arlo v2",
   "name": "homebridge-arlo-v2",
-  "version": "2.1.9",
+  "version": "2.1.10",
   "description": "Arlo plugin for homebridge",
   "author": "Will O'Donnell",
   "main": "dist/index.js",
