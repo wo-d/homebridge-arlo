@@ -24,7 +24,7 @@ export class ArloAccessory {
 
     this.accessory.getService(this.platform.Service.AccessoryInformation)!
       .setCharacteristic(this.platform.Characteristic.Manufacturer, "Arlo")
-      .setCharacteristic(this.platform.Characteristic.Model, this.device.properties.modelId)
+      .setCharacteristic(this.platform.Characteristic.Model, this.device.modelId)
       .setCharacteristic(this.platform.Characteristic.SerialNumber, this.device.deviceId);
 
     // NOTE: Only the doorbell is supported at this time.
