@@ -118,7 +118,8 @@ export class ArloPlatform implements DynamicPlatformPlugin {
     for (const device of devices) {
       // For now the homebridge arlo platform only supports doorbell events...
       if (device.deviceType !== 'basestation') {
-        this.log.info(`Ignoring non basestation device with name ${DisplayName(device)}.`);
+        // Commented until I figure out a more suitable message to display to end user without confusion.
+        // this.log.debug(`Ignoring non basestation device with name ${DisplayName(device)}.`);
         continue;
       }
 
@@ -135,7 +136,7 @@ export class ArloPlatform implements DynamicPlatformPlugin {
       if (existingAccessory) {
         this.log.info('Restoring existing accessory from cache:', existingAccessory.displayName);
 
-        // Ff you need to update the accessory.context then you should run `api.updatePlatformAccessories`. eg.:
+        // If you need to update the accessory.context then you should run `api.updatePlatformAccessories`. eg.:
         // existingAccessory.context.device = device;
         // this.api.updatePlatformAccessories([existingAccessory]);
 
