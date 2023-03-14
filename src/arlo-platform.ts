@@ -11,7 +11,7 @@ import {
 import * as util from "util";
 import { arloOptionsInterface } from "./arlo-config";
 import { Client } from "arlo-api";
-import { ArloAccessory } from "./arlo-accessory";
+import { ArloDoorbellAccessory } from "./arlo-doorbell-accessory";
 import { PLATFORM_NAME, PLUGIN_NAME } from "./settings";
 import { DisplayName } from "./utils/utils";
 
@@ -84,7 +84,7 @@ export class ArloPlatform implements DynamicPlatformPlugin {
    * Event handler called by an accessory when it receives a closed stream event.
    * @param accessory
    */
-  public streamClosed(accessory: ArloAccessory) {
+  public streamClosed(accessory: ArloDoorbellAccessory) {
     if (!this.config.enableRetry) {
       this.log.error('Retries disabled and stream has been closed. Application stalled.');
       return;
@@ -142,7 +142,7 @@ export class ArloPlatform implements DynamicPlatformPlugin {
 
         // Create the accessory handler for the restored accessory. 
         // The cached device keeps its context.
-        new ArloAccessory(this, existingAccessory);
+        new ArloDoorbellAccessory(this, existingAccessory);
 
         // It is possible to remove platform accessories at any time using `api.unregisterPlatformAccessories`, eg.:
         // remove platform accessories when no longer present
@@ -152,10 +152,10 @@ export class ArloPlatform implements DynamicPlatformPlugin {
         this.api.unregisterPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [existingAccessory]);
       } else {
 
-        this.log.info('Adding new accessory:', DisplayName(device));
+        this.log.info('Adding new accessory:', DisplayName());
 
         // Create a new accessory.
-        const accessory = new this.api.platformAccessory(DisplayName(device), uuid);
+        const accessory = new this.api.platformAccessory(DisplayName(), uuid);
 
         // Store a copy of the device object in the `accessory.context`.
         // The `context` property can be used to store any data about the accessory
@@ -163,7 +163,7 @@ export class ArloPlatform implements DynamicPlatformPlugin {
         accessory.context.device = device;
 
         // Create the accessory handler for the newly created accessory.
-        new ArloAccessory(this, accessory);
+        new ArloDoorbellAccessory(this, accessory);
 
         // Link the accessory to the platform.
         this.api.publishExternalAccessories(PLUGIN_NAME, [accessory]);

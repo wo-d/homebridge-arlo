@@ -4,18 +4,14 @@ import { Basestation, Client } from "arlo-api";
 import { DEVICE_RESPONSE } from "arlo-api/dist/interfaces/arlo-interfaces";
 import { debounce, DisplayName } from "./utils/utils";
 import ARLO_EVENTS from "arlo-api/dist/constants/arlo-events";
+import { ArloCameraAccessory } from "./arlo-camera-accessory";
 
-export class ArloAccessory {
+export class ArloDoorbellAccessory extends ArloCameraAccessory {
   private doorbellService: Service;
-
-  protected readonly log: Logging;
-
-  protected readonly platform: ArloPlatform;
   private readonly basestation: Basestation;
 
   constructor(platform: ArloPlatform, accessory: PlatformAccessory) {
-    this.log = platform.log;
-    this.platform = platform;
+    super(platform, accessory);
 
     const device = accessory.context.device as DEVICE_RESPONSE;
 
@@ -32,7 +28,7 @@ export class ArloAccessory {
       accessory.addService(this.platform.Service.Doorbell);
 
     // Sets the service name, this is what is displayed as the default name on the Home app.
-    this.doorbellService.setCharacteristic(this.platform.Characteristic.Name, DisplayName(device));
+    this.doorbellService.setCharacteristic(this.platform.Characteristic.Name, DisplayName());
 
     // Each service must implement at-minimum the "required characteristics" for the given service type
     // see https://developers.homebridge.io/#/service/Doorbell
