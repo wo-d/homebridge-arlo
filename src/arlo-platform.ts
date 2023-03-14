@@ -148,6 +148,8 @@ export class ArloPlatform implements DynamicPlatformPlugin {
         // remove platform accessories when no longer present
         // this.api.unregisterPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [existingAccessory]);
         // this.log.info('Removing existing accessory from cache:', existingAccessory.displayName);
+
+        this.api.unregisterPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [existingAccessory]);
       } else {
 
         this.log.info('Adding new accessory:', DisplayName(device));
@@ -164,7 +166,7 @@ export class ArloPlatform implements DynamicPlatformPlugin {
         new ArloAccessory(this, accessory);
 
         // Link the accessory to the platform.
-        this.api.registerPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [accessory]);
+        this.api.publishExternalAccessories(PLUGIN_NAME, [accessory]);
       }
     }
   }
