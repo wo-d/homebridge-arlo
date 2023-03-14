@@ -1,7 +1,7 @@
 {
   "displayName": "Arlo v2",
   "name": "homebridge-arlo-v2",
-  "version": "2.1.11",
+  "version": "2.1.12",
   "description": "Arlo plugin for homebridge",
   "author": "Will O'Donnell",
   "main": "dist/index.js",
@@ -47,7 +47,8 @@
   },
   "prettier": {
     "trailingComma": "es5",
-    "singleQuote": false,
-    "tabWidth": 2
+    "singleQuote": true,
+    "tabWidth": 2,
+    "endOfLine": "crlf"
   }
 }

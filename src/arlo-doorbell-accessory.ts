@@ -1,53 +1,57 @@
-import { ArloPlatform } from "./arlo-platform";
-import { Logging, PlatformAccessory, Service } from "homebridge";
-import { Basestation, Client } from "arlo-api";
-import { DEVICE_RESPONSE } from "arlo-api/dist/interfaces/arlo-interfaces";
-import { debounce, DisplayName } from "./utils/utils";
-import ARLO_EVENTS from "arlo-api/dist/constants/arlo-events";
+import { ArloPlatform } from './arlo-platform';
+import { PlatformAccessory, Service } from 'homebridge';
+import { Basestation } from 'arlo-api';
+import { DEVICE_RESPONSE } from 'arlo-api/dist/interfaces/arlo-interfaces';
+import { debounce, DisplayName } from './utils/utils';
+import ARLO_EVENTS from 'arlo-api/dist/constants/arlo-events';
+import { ArloCameraAccessory } from './arlo-camera-accessory';
 
-export class ArloAccessory {
-  private service: Service;
-  protected readonly accessory: PlatformAccessory;
-  protected readonly arlo: Client;
-  protected readonly log: Logging;
-  protected readonly platform: ArloPlatform;
-  protected readonly device: DEVICE_RESPONSE;
+/**
+ * Homekit does not support a stand-alone doorbell accessory. It must
+ * be part of a video doorbell.
+ */
+export class ArloDoorbellAccessory extends ArloCameraAccessory {
+  private doorbellService: Service;
   private readonly basestation: Basestation;
 
   constructor(platform: ArloPlatform, accessory: PlatformAccessory) {
-    this.arlo = platform.arlo
-    this.log = platform.log;
-    this.platform = platform;
-    this.accessory = accessory;
+    super(platform, accessory);
 
-    this.device = this.accessory.context.device as DEVICE_RESPONSE;
+    const device = accessory.context.device as DEVICE_RESPONSE;
 
-    this.accessory.getService(this.platform.Service.AccessoryInformation)!
-      .setCharacteristic(this.platform.Characteristic.Manufacturer, "Arlo")
-      .setCharacteristic(this.platform.Characteristic.Model, this.device.modelId)
-      .setCharacteristic(this.platform.Characteristic.SerialNumber, this.device.deviceId);
+    accessory
+      .getService(this.platform.Service.AccessoryInformation)!
+      .setCharacteristic(this.platform.Characteristic.Manufacturer, 'Arlo')
+      .setCharacteristic(this.platform.Characteristic.Model, device.modelId)
+      .setCharacteristic(
+        this.platform.Characteristic.SerialNumber,
+        device.deviceId
+      );
 
     // NOTE: Only the doorbell is supported at this time.
     // Get the Doorbell service if it exists, otherwise create a new service.
     // Multiple services can be created for each accessory.
-    this.service =
-      this.accessory.getService(this.platform.Service.Doorbell) ||
-      this.accessory.addService(this.platform.Service.Doorbell);
+    this.doorbellService =
+      accessory.getService(this.platform.Service.Doorbell) ||
+      accessory.addService(this.platform.Service.Doorbell);
 
     // Sets the service name, this is what is displayed as the default name on the Home app.
-    this.service.setCharacteristic(this.platform.Characteristic.Name, DisplayName(this.device));
+    this.doorbellService.setCharacteristic(
+      this.platform.Characteristic.Name,
+      DisplayName()
+    );
 
     // Each service must implement at-minimum the "required characteristics" for the given service type
     // see https://developers.homebridge.io/#/service/Doorbell
 
     // add characteristic ProgrammableSwitchEvent
-    this.service
+    this.doorbellService
       .getCharacteristic(this.platform.Characteristic.ProgrammableSwitchEvent)
       .onGet(() => null);
 
-    this.service.setPrimaryService(true);
+    this.doorbellService.setPrimaryService(true);
 
-    this.basestation = new Basestation(this.arlo, this.device);
+    this.basestation = new Basestation(platform.arlo, device);
     // Fire off basestation subscribe.
     this.subscribe();
     this.openStream();
@@ -68,7 +72,7 @@ export class ArloAccessory {
       this.log.debug(`Basestation stream closed: ${data}`);
       // Let the platform know that an accessory stream was closed.
       this.platform.streamClosed(this);
-    }
+    };
 
     const debounceStreamClose = debounce(streamClosed, 2000);
 
@@ -82,16 +86,17 @@ export class ArloAccessory {
 
     this.basestation.on(ARLO_EVENTS.doorbellAlert, () => {
       this.log('Doorbell alert encountered!');
-      this.service.updateCharacteristic(
-        this.platform.Characteristic.ProgrammableSwitchEvent,
-        this.platform.Characteristic.ProgrammableSwitchEvent.SINGLE_PRESS,
-      );
-    })
+      this.doorbellService
+        .getCharacteristic(this.platform.Characteristic.ProgrammableSwitchEvent)
+        .updateValue(
+          this.platform.Characteristic.ProgrammableSwitchEvent.SINGLE_PRESS
+        );
+    });
 
     // Secret keep alive event.
     this.basestation.on('pong', () => {
       this.log.debug('ping');
-    })
+    });
   }
 
   public async openStream() {

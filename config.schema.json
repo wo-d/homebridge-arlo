@@ -94,10 +94,7 @@
       "items": [
         {
           "description": "Enter recovery options below.",
-          "items": [
-            "enableRetry",
-            "retryInterval"
-          ]
+          "items": ["enableRetry", "retryInterval"]
         }
       ]
     },
@@ -109,9 +106,7 @@
       "items": [
         {
           "description": "These settings should not be necessary for most installations.",
-          "items": [
-            "debug"
-          ]
+          "items": ["debug"]
         }
       ]
     }

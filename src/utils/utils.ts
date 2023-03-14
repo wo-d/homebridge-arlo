@@ -1,12 +1,9 @@
-import { DEVICE_RESPONSE } from "arlo-api/dist/interfaces/arlo-interfaces";
-
 /**
  * Returns a display name used for the accessory creation.
- * @param device
  * @private
  */
-export function DisplayName(device: DEVICE_RESPONSE): string {
-  return `Doorbell`;
+export function DisplayName(): string {
+  return `Arlo Doorbell`;
 }
 
 // Pulled from https://gist.github.com/ca0v/73a31f57b397606c9813472f7493a940?permalink_comment_id=3062135#gistcomment-3062135

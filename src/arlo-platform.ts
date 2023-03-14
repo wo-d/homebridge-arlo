@@ -7,13 +7,13 @@ import {
   PlatformConfig,
   Service,
   Characteristic,
-} from "homebridge";
-import * as util from "util";
-import { arloOptionsInterface } from "./arlo-config";
-import { Client } from "arlo-api";
-import { ArloAccessory } from "./arlo-accessory";
-import { PLATFORM_NAME, PLUGIN_NAME } from "./settings";
-import { DisplayName } from "./utils/utils";
+} from 'homebridge';
+import * as util from 'util';
+import { arloOptionsInterface } from './arlo-config';
+import { Client } from 'arlo-api';
+import { ArloDoorbellAccessory } from './arlo-doorbell-accessory';
+import { PLATFORM_NAME, PLUGIN_NAME } from './settings';
+import { DisplayName } from './utils/utils';
 
 export class ArloPlatform implements DynamicPlatformPlugin {
   public readonly Service: typeof Service;
@@ -38,7 +38,7 @@ export class ArloPlatform implements DynamicPlatformPlugin {
     this.Characteristic = this.api.hap.Characteristic;
 
     if (!config) {
-      this.log.error("No configuration provided");
+      this.log.error('No configuration provided');
       return;
     }
 
@@ -56,22 +56,26 @@ export class ArloPlatform implements DynamicPlatformPlugin {
 
     if (this.config.enableRetry) {
       if (this.config.retryInterval <= 0) {
-        this.log.error('Retry Interval configuration must be a positive integer');
-        return
+        this.log.error(
+          'Retry Interval configuration must be a positive integer'
+        );
+        return;
       }
     }
 
     try {
       this.arlo = new Client(this.config);
     } catch (e: any) {
-      this.log.error("Unable to construct an Arlo client with the provided configuration.");
-      this.log.error("You are missing a required configuration.");
+      this.log.error(
+        'Unable to construct an Arlo client with the provided configuration.'
+      );
+      this.log.error('You are missing a required configuration.');
       this.log.error(e);
       return;
     }
 
-    this.log.info("Homebridge Arlo configuration loaded successfully.");
-    this.debug("Debug logging on.");
+    this.log.info('Homebridge Arlo configuration loaded successfully.');
+    this.debug('Debug logging on.');
 
     api.on(APIEvent.DID_FINISH_LAUNCHING, () => {
       this.debug('Executed didFinishLaunching callback');
@@ -84,13 +88,17 @@ export class ArloPlatform implements DynamicPlatformPlugin {
    * Event handler called by an accessory when it receives a closed stream event.
    * @param accessory
    */
-  public streamClosed(accessory: ArloAccessory) {
+  public streamClosed(accessory: ArloDoorbellAccessory) {
     if (!this.config.enableRetry) {
-      this.log.error('Retries disabled and stream has been closed. Application stalled.');
+      this.log.error(
+        'Retries disabled and stream has been closed. Application stalled.'
+      );
       return;
     }
 
-    this.debug(`Stream was closed. Retrying to establish connection in ${this.config.retryInterval} minute(s).`);
+    this.debug(
+      `Stream was closed. Retrying to establish connection in ${this.config.retryInterval} minute(s).`
+    );
     // Restart the stream in x minutes.
     setTimeout(() => accessory.openStream(), this.config.retryInterval * 60000);
   }
@@ -131,29 +139,37 @@ export class ArloPlatform implements DynamicPlatformPlugin {
       // See if an accessory with the same uuid has already been registered and
       // restored from the cached devices we stored in the `configureAccessory`
       // method.
-      const existingAccessory = this.accessories.find(accessory => accessory.UUID === uuid);
+      const existingAccessory = this.accessories.find(
+        (accessory) => accessory.UUID === uuid
+      );
 
       if (existingAccessory) {
-        this.log.info('Restoring existing accessory from cache:', existingAccessory.displayName);
+        this.log.info(
+          'Restoring existing accessory from cache:',
+          existingAccessory.displayName
+        );
 
         // If you need to update the accessory.context then you should run `api.updatePlatformAccessories`. eg.:
         // existingAccessory.context.device = device;
         // this.api.updatePlatformAccessories([existingAccessory]);
 
-        // Create the accessory handler for the restored accessory. 
+        // Create the accessory handler for the restored accessory.
         // The cached device keeps its context.
-        new ArloAccessory(this, existingAccessory);
+        new ArloDoorbellAccessory(this, existingAccessory);
 
         // It is possible to remove platform accessories at any time using `api.unregisterPlatformAccessories`, eg.:
         // remove platform accessories when no longer present
         // this.api.unregisterPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [existingAccessory]);
         // this.log.info('Removing existing accessory from cache:', existingAccessory.displayName);
-      } else {
 
-        this.log.info('Adding new accessory:', DisplayName(device));
+        this.api.unregisterPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [
+          existingAccessory,
+        ]);
+      } else {
+        this.log.info('Adding new accessory:', DisplayName());
 
         // Create a new accessory.
-        const accessory = new this.api.platformAccessory(DisplayName(device), uuid);
+        const accessory = new this.api.platformAccessory(DisplayName(), uuid);
 
         // Store a copy of the device object in the `accessory.context`.
         // The `context` property can be used to store any data about the accessory
@@ -161,10 +177,10 @@ export class ArloPlatform implements DynamicPlatformPlugin {
         accessory.context.device = device;
 
         // Create the accessory handler for the newly created accessory.
-        new ArloAccessory(this, accessory);
+        new ArloDoorbellAccessory(this, accessory);
 
         // Link the accessory to the platform.
-        this.api.registerPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [accessory]);
+        this.api.publishExternalAccessories(PLUGIN_NAME, [accessory]);
       }
     }
   }
@@ -174,8 +190,8 @@ export class ArloPlatform implements DynamicPlatformPlugin {
    * @returns true when login is successful, false otherwise.
    */
   public async login(): Promise<boolean> {
-    const loginResult = await this.arlo.login().catch(error => {
-      this.log.error("Unable to login to Arlo using provided credentials.");
+    const loginResult = await this.arlo.login().catch((error) => {
+      this.log.error('Unable to login to Arlo using provided credentials.');
       this.log.error(error);
       return false;
     });

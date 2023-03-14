@@ -14,9 +14,7 @@
         "showReuseMessage": true,
         "clear": false
       },
-      "problemMatcher": [
-        "$tsc"
-      ],
+      "problemMatcher": ["$tsc"],
       "group": {
         "kind": "build",
         "isDefault": true

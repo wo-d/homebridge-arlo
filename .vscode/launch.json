@@ -4,9 +4,7 @@
     {
       "name": "Launch Homebridge",
       "request": "launch",
-      "skipFiles": [
-        "<node_internals>/**"
-      ],
+      "skipFiles": ["<node_internals>/**"],
       "type": "pwa-node",
       "preLaunchTask": "build",
       "windows": {
