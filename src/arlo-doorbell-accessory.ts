@@ -1,11 +1,15 @@
-import { ArloPlatform } from "./arlo-platform";
-import { Logging, PlatformAccessory, Service } from "homebridge";
-import { Basestation, Client } from "arlo-api";
-import { DEVICE_RESPONSE } from "arlo-api/dist/interfaces/arlo-interfaces";
-import { debounce, DisplayName } from "./utils/utils";
-import ARLO_EVENTS from "arlo-api/dist/constants/arlo-events";
-import { ArloCameraAccessory } from "./arlo-camera-accessory";
+import { ArloPlatform } from './arlo-platform';
+import { PlatformAccessory, Service } from 'homebridge';
+import { Basestation } from 'arlo-api';
+import { DEVICE_RESPONSE } from 'arlo-api/dist/interfaces/arlo-interfaces';
+import { debounce, DisplayName } from './utils/utils';
+import ARLO_EVENTS from 'arlo-api/dist/constants/arlo-events';
+import { ArloCameraAccessory } from './arlo-camera-accessory';
 
+/**
+ * Homekit does not support a stand-alone doorbell accessory. It must
+ * be part of a video doorbell.
+ */
 export class ArloDoorbellAccessory extends ArloCameraAccessory {
   private doorbellService: Service;
   private readonly basestation: Basestation;
@@ -15,10 +19,14 @@ export class ArloDoorbellAccessory extends ArloCameraAccessory {
 
     const device = accessory.context.device as DEVICE_RESPONSE;
 
-    accessory.getService(this.platform.Service.AccessoryInformation)!
-      .setCharacteristic(this.platform.Characteristic.Manufacturer, "Arlo")
+    accessory
+      .getService(this.platform.Service.AccessoryInformation)!
+      .setCharacteristic(this.platform.Characteristic.Manufacturer, 'Arlo')
       .setCharacteristic(this.platform.Characteristic.Model, device.modelId)
-      .setCharacteristic(this.platform.Characteristic.SerialNumber, device.deviceId);
+      .setCharacteristic(
+        this.platform.Characteristic.SerialNumber,
+        device.deviceId
+      );
 
     // NOTE: Only the doorbell is supported at this time.
     // Get the Doorbell service if it exists, otherwise create a new service.
@@ -28,7 +36,10 @@ export class ArloDoorbellAccessory extends ArloCameraAccessory {
       accessory.addService(this.platform.Service.Doorbell);
 
     // Sets the service name, this is what is displayed as the default name on the Home app.
-    this.doorbellService.setCharacteristic(this.platform.Characteristic.Name, DisplayName());
+    this.doorbellService.setCharacteristic(
+      this.platform.Characteristic.Name,
+      DisplayName()
+    );
 
     // Each service must implement at-minimum the "required characteristics" for the given service type
     // see https://developers.homebridge.io/#/service/Doorbell
@@ -61,7 +72,7 @@ export class ArloDoorbellAccessory extends ArloCameraAccessory {
       this.log.debug(`Basestation stream closed: ${data}`);
       // Let the platform know that an accessory stream was closed.
       this.platform.streamClosed(this);
-    }
+    };
 
     const debounceStreamClose = debounce(streamClosed, 2000);
 
@@ -77,13 +88,15 @@ export class ArloDoorbellAccessory extends ArloCameraAccessory {
       this.log('Doorbell alert encountered!');
       this.doorbellService
         .getCharacteristic(this.platform.Characteristic.ProgrammableSwitchEvent)
-        .updateValue(this.platform.Characteristic.ProgrammableSwitchEvent.SINGLE_PRESS);
-    })
+        .updateValue(
+          this.platform.Characteristic.ProgrammableSwitchEvent.SINGLE_PRESS
+        );
+    });
 
     // Secret keep alive event.
     this.basestation.on('pong', () => {
       this.log.debug('ping');
-    })
+    });
   }
 
   public async openStream() {

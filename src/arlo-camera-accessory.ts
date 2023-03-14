@@ -5,10 +5,10 @@ import {
   CharacteristicValue,
   CameraStreamingDelegate,
   CameraStreamingOptions,
-} from "homebridge";
-import { ArloPlatform } from "./arlo-platform";
-import { DisplayName } from "./utils/utils";
-import { CameraControllerOptions } from "hap-nodejs/dist/lib/controller/CameraController";
+} from 'homebridge';
+import { ArloPlatform } from './arlo-platform';
+import { DisplayName } from './utils/utils';
+import { CameraControllerOptions } from 'hap-nodejs/dist/lib/controller/CameraController';
 
 export class ArloCameraAccessory {
   protected readonly platform: ArloPlatform;
@@ -25,7 +25,9 @@ export class ArloCameraAccessory {
 
     this.cameraService = this.cameraFunction(accessory);
     this.cameraService.setPrimaryService(true);
-    accessory.configureController(new this.platform.api.hap.CameraController(this.controllerOptions()));
+    accessory.configureController(
+      new this.platform.api.hap.CameraController(this.controllerOptions())
+    );
 
     this.motionService = this.motionFunction(accessory);
   }
@@ -33,15 +35,15 @@ export class ArloCameraAccessory {
   private controllerOptions(): CameraControllerOptions {
     return {
       delegate: this.cameraStreamingDelegate(),
-      streamingOptions: this.cameraStreamingOptions()
-    }
+      streamingOptions: this.cameraStreamingOptions(),
+    };
   }
 
   private cameraStreamingDelegate(): CameraStreamingDelegate {
     return {
       handleSnapshotRequest(): void {},
       handleStreamRequest(): void {},
-      prepareStream(): void {}
+      prepareStream(): void {},
     };
   }
 
@@ -69,13 +71,11 @@ export class ArloCameraAccessory {
         },
       },
       disable_audio_proxy: false,
-      srtp: false
-    }
+      srtp: false,
+    };
   }
 
-  private cameraFunction(
-    accessory: PlatformAccessory,
-  ): Service {
+  private cameraFunction(accessory: PlatformAccessory): Service {
     const service =
       accessory.getService(this.platform.Service.CameraOperatingMode) ||
       accessory.addService(this.platform.Service.CameraOperatingMode);
@@ -99,9 +99,7 @@ export class ArloCameraAccessory {
     return service as Service;
   }
 
-  private motionFunction(
-    accessory: PlatformAccessory,
-  ): Service {
+  private motionFunction(accessory: PlatformAccessory): Service {
     const service =
       accessory.getService(this.platform.Service.MotionSensor) ||
       accessory.addService(this.platform.Service.MotionSensor);
@@ -116,23 +114,40 @@ export class ArloCameraAccessory {
   }
 
   handleEventSnapshotsActiveGet(): CharacteristicValue {
-    const currentValue = this.platform.Characteristic.EventSnapshotsActive.DISABLE;
-    this.log.debug(this.accessory.displayName, 'GET EventSnapshotsActive:', currentValue);
+    const currentValue =
+      this.platform.Characteristic.EventSnapshotsActive.DISABLE;
+    this.log.debug(
+      this.accessory.displayName,
+      'GET EventSnapshotsActive:',
+      currentValue
+    );
     return currentValue;
   }
 
   handleEventSnapshotsActiveSet(value: CharacteristicValue) {
-    this.log.debug(this.accessory.displayName, 'SET EventSnapshotsActive:', value);
+    this.log.debug(
+      this.accessory.displayName,
+      'SET EventSnapshotsActive:',
+      value
+    );
   }
 
   handleHomeKitCameraActiveGet(): CharacteristicValue {
     const currentValue = this.platform.Characteristic.HomeKitCameraActive.OFF;
-    this.log.debug(this.accessory.displayName, 'GET HomeKitCameraActive:', currentValue);
+    this.log.debug(
+      this.accessory.displayName,
+      'GET HomeKitCameraActive:',
+      currentValue
+    );
     return currentValue;
   }
 
   handleHomeKitCameraActiveSet(value: CharacteristicValue) {
-    this.platform.log.debug(this.accessory.displayName, 'SET HomeKitCameraActive:', value);
+    this.platform.log.debug(
+      this.accessory.displayName,
+      'SET HomeKitCameraActive:',
+      value
+    );
   }
 
   handleMotionDetectedGet(): CharacteristicValue {

@@ -1,5 +1,3 @@
-import { DEVICE_RESPONSE } from "arlo-api/dist/interfaces/arlo-interfaces";
-
 /**
  * Returns a display name used for the accessory creation.
  * @private

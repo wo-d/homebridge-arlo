@@ -47,7 +47,8 @@
   },
   "prettier": {
     "trailingComma": "es5",
-    "singleQuote": false,
-    "tabWidth": 2
+    "singleQuote": true,
+    "tabWidth": 2,
+    "endOfLine": "crlf"
   }
 }
